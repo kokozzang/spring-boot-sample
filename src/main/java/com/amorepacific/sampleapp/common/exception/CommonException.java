@@ -11,9 +11,9 @@ public class CommonException extends RuntimeException {
 	private static final long serialVersionUID = 2091972500749549823L;
 
 	@Getter
-	private String code;
+	protected String code;
 
 	@Getter
-	private String message;
+	protected String message;
 
 }
