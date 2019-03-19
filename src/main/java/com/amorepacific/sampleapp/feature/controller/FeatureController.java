@@ -1,10 +1,15 @@
 package com.amorepacific.sampleapp.feature.controller;
 
+import com.amorepacific.sampleapp.common.dto.ErrorDetail;
+import com.amorepacific.sampleapp.common.exception.custom.BadRequestException;
+import com.amorepacific.sampleapp.common.exception.wrapper.BadRequest;
 import com.amorepacific.sampleapp.feature.dto.FeatureRequest;
 import com.amorepacific.sampleapp.feature.model.Feature;
 import com.google.common.collect.Lists;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FeatureController {
 
   @GetMapping(value = "")
-  public List<Feature> getFeatures() {
+  public List<Feature> getFeatures(@RequestParam(value = "size") int size, @RequestParam(value = "page") int page) {
 
     Feature feature = new Feature();
     feature.setId(1);
@@ -33,6 +39,8 @@ public class FeatureController {
     feature.setDate(LocalDateTime.now());
 
     List<Feature> features = Lists.newArrayList();
+
+    logger.debug("size: {}, page: {}", size, page);
 
     return features;
   }
@@ -77,5 +85,25 @@ public class FeatureController {
 //    // delete action
 //  }
 
+
+  @GetMapping(value = "/custom_bad_request")
+  public Feature throwBadRequest() {
+    ErrorDetail errorDetail = ErrorDetail.builder()
+        .field("field명")
+        .message("field명은 낫널이에여")
+        .value(null)
+        .build();
+
+    List<ErrorDetail> errorDetails = Lists.newArrayList();
+    errorDetails.add(errorDetail);
+
+    throw new BadRequestException(errorDetails);
+  }
+
+  @GetMapping(value = "/runtime_error")
+  public Feature throwRuntimeError() {
+
+    throw new RuntimeException();
+  }
 }
 

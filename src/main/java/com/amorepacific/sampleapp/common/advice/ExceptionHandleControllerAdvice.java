@@ -1,20 +1,20 @@
 package com.amorepacific.sampleapp.common.advice;
 
-import com.amorepacific.sampleapp.common.dto.ErrorDetail;
 import com.amorepacific.sampleapp.common.dto.ErrorResponse;
 import com.amorepacific.sampleapp.common.exception.CommonException;
-import com.amorepacific.sampleapp.common.exception.wrapper.BadRequest;
+import com.amorepacific.sampleapp.common.exception.custom.BadRequestException;
+import com.amorepacific.sampleapp.common.exception.wrapper.InternalServerError;
 import com.amorepacific.sampleapp.common.exception.wrapper.MethodNotAllowed;
-import com.amorepacific.sampleapp.common.exception.wrapper.NotFoundException;
-import com.google.common.collect.Lists;
-import java.util.List;
+import com.amorepacific.sampleapp.common.exception.wrapper.NotFound;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 
@@ -26,28 +26,26 @@ public class ExceptionHandleControllerAdvice {
     return this.sendError(e, new ErrorResponse(e));
   }
 
-  // 400 Bad Request
-  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
-  // https://tools.ietf.org/html/rfc7231#section-6.5.4
-  @ExceptionHandler(value = MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorResponse> handleBadRequestException(MethodArgumentNotValidException e) {
-    List<ErrorDetail> errorDetails = Lists.newArrayList();
-
-    e.getBindingResult().getAllErrors().forEach(error -> {
-      FieldError fieldError = (FieldError) error;
-      ErrorDetail errorDetail = ErrorDetail.builder()
-          .field(fieldError.getField())
-          .value(fieldError.getRejectedValue())
-          .message(fieldError.getDefaultMessage())
-          .build();
-      errorDetails.add(errorDetail);
-    });
-
-    CommonException commonException = new BadRequest();
-
-    return this.sendError(commonException, new ErrorResponse(commonException, errorDetails));
+  /**
+   * 400 Bad Request
+   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+   * https://tools.ietf.org/html/rfc7231#section-6.5.4
+   * @param e
+   * @return
+   * @throws Exception
+   */
+  @ExceptionHandler(value = {
+      BadRequestException.class,
+      MethodArgumentNotValidException.class,
+      MethodArgumentNotValidException.class,
+      MissingServletRequestParameterException.class,
+      MethodArgumentTypeMismatchException.class,
+      HttpMessageNotReadableException.class,
+  })
+  public ResponseEntity<ErrorResponse> handleBadRequestException(Exception e) throws Exception {
+    BadRequestException badRequestException = new BadRequestException(e);
+    return this.sendError(badRequestException, new ErrorResponse(badRequestException));
   }
-
 
   /**
    * 404 Not Found
@@ -55,10 +53,12 @@ public class ExceptionHandleControllerAdvice {
    * https://tools.ietf.org/html/rfc7231#section-6.5.1
    */
   @ExceptionHandler(NoHandlerFoundException.class)
-  public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(Exception e) {
-    CommonException commonException = new NotFoundException();
+  public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(NoHandlerFoundException e) {
+    CommonException commonException = new NotFound();
     return this.sendError(commonException, new ErrorResponse(commonException));
   }
+
+
 
   /**
    * 405 Method Not Allowed
@@ -71,12 +71,11 @@ public class ExceptionHandleControllerAdvice {
     return this.sendError(commonException, new ErrorResponse(commonException));
   }
 
-
-//  @ExceptionHandler(value = Exception.class)
-//  public ResponseEntity<ErrorResponse> handleException(Exception e) {
-//    CommonException commonException = new InternalServerError();
-//    return this.sendError(commonException, new ErrorResponse(commonException));
-//  }
+  @ExceptionHandler(value = Exception.class)
+  public ResponseEntity<ErrorResponse> handleException(Exception e) {
+    CommonException commonException = new InternalServerError();
+    return this.sendError(commonException, new ErrorResponse(commonException));
+  }
 
   private ResponseEntity<ErrorResponse> sendError(CommonException e, final ErrorResponse errorResponse) {
     return ResponseEntity

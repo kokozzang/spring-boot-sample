@@ -3,7 +3,7 @@ package com.amorepacific.sampleapp.common.enums;
 import lombok.Getter;
 
 public enum ExceptionGroup {
-  INTERNAL_SERVER("500","Internal Server Error Exception"),
+  INTERNAL_SERVER("500","Internal Server Error"),
   BAD_REQUEST("400", "Invalid parameters"),
   NOT_FOUND("404", "Not Found"),
   METHOD_NOT_ALLOWED("405", "Requested method is not supported"),
