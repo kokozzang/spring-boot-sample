@@ -1,7 +1,7 @@
-package com.amorepacific.sampleapp.common.exception.custom;
+package com.amorepacific.common.exception.custom;
 
-import com.amorepacific.sampleapp.common.dto.ErrorDetail;
-import com.amorepacific.sampleapp.common.exception.wrapper.BadRequest;
+import com.amorepacific.common.dto.ErrorDetail;
+import com.amorepacific.common.exception.wrapper.BadRequest;
 import com.google.common.collect.Lists;
 import java.util.List;
 import lombok.Getter;

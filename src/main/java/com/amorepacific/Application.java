@@ -1,4 +1,4 @@
-package com.amorepacific.sampleapp;
+package com.amorepacific;
 
 import java.util.Locale;
 import java.util.TimeZone;

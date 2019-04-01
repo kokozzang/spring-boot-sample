@@ -1,4 +1,4 @@
-package com.amorepacific.sampleapp.common.config;
+package com.amorepacific.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;

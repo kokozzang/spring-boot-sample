@@ -1,4 +1,4 @@
-package com.amorepacific.sampleapp.common.enums;
+package com.amorepacific.common.enums;
 
 import lombok.Getter;
 

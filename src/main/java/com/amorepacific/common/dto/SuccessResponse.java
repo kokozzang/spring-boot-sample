@@ -1,4 +1,4 @@
-package com.amorepacific.sampleapp.common.dto;
+package com.amorepacific.common.dto;
 
 import lombok.Getter;
 

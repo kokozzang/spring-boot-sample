@@ -1,19 +1,22 @@
-package com.amorepacific.sampleapp.common.exception;
+package com.amorepacific.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-@NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
-public class CommonException extends RuntimeException {
+public abstract class CommonException extends RuntimeException {
 
 	private static final long serialVersionUID = 2091972500749549823L;
 
 	@Getter
+	@NonNull
 	protected String code;
 
 	@Getter
+	@NonNull
 	protected String message;
 
 }

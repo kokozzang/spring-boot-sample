@@ -1,7 +1,7 @@
-package com.amorepacific.sampleapp.common.exception.custom;
+package com.amorepacific.common.exception.custom;
 
-import com.amorepacific.sampleapp.common.enums.ExceptionGroup;
-import com.amorepacific.sampleapp.common.exception.CommonException;
+import com.amorepacific.common.enums.ExceptionGroup;
+import com.amorepacific.common.exception.CommonException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

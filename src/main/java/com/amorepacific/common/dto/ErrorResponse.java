@@ -1,15 +1,11 @@
-package com.amorepacific.sampleapp.common.dto;
+package com.amorepacific.common.dto;
 
-import com.amorepacific.sampleapp.common.exception.CommonException;
-import com.amorepacific.sampleapp.common.exception.custom.BadRequestException;
+import com.amorepacific.common.exception.CommonException;
+import com.amorepacific.common.exception.custom.BadRequestException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.google.common.collect.Lists;
 import java.util.List;
 import lombok.Getter;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 
 @Getter
 public class ErrorResponse extends Response {

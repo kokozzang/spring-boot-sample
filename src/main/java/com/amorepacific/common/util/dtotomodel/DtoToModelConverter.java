@@ -1,4 +1,4 @@
-package com.amorepacific.sampleapp.common.util.dtotomodel;
+package com.amorepacific.common.util.dtotomodel;
 
 import org.modelmapper.ModelMapper;
 
