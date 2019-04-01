@@ -1,19 +1,15 @@
 package com.amorepacific.sampleapp.feature.controller;
 
-import com.amorepacific.sampleapp.common.dto.ErrorDetail;
-import com.amorepacific.sampleapp.common.exception.custom.BadRequestException;
-import com.amorepacific.sampleapp.common.exception.wrapper.BadRequest;
+import com.amorepacific.common.dto.ErrorDetail;
+import com.amorepacific.common.exception.custom.BadRequestException;
 import com.amorepacific.sampleapp.feature.dto.FeatureRequest;
 import com.amorepacific.sampleapp.feature.model.Feature;
 import com.google.common.collect.Lists;
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;

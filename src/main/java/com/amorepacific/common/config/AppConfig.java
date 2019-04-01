@@ -1,4 +1,4 @@
-package com.amorepacific.sampleapp.common.config;
+package com.amorepacific.common.config;
 
 import org.springframework.context.annotation.Configuration;
 

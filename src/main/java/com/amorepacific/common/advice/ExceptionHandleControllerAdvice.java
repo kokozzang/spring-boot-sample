@@ -1,11 +1,11 @@
-package com.amorepacific.sampleapp.common.advice;
+package com.amorepacific.common.advice;
 
-import com.amorepacific.sampleapp.common.dto.ErrorResponse;
-import com.amorepacific.sampleapp.common.exception.CommonException;
-import com.amorepacific.sampleapp.common.exception.custom.BadRequestException;
-import com.amorepacific.sampleapp.common.exception.wrapper.InternalServerError;
-import com.amorepacific.sampleapp.common.exception.wrapper.MethodNotAllowed;
-import com.amorepacific.sampleapp.common.exception.wrapper.NotFound;
+import com.amorepacific.common.dto.ErrorResponse;
+import com.amorepacific.common.exception.CommonException;
+import com.amorepacific.common.exception.custom.BadRequestException;
+import com.amorepacific.common.exception.wrapper.InternalServerError;
+import com.amorepacific.common.exception.wrapper.MethodNotAllowed;
+import com.amorepacific.common.exception.wrapper.NotFound;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;

@@ -1,4 +1,4 @@
-package com.amorepacific.sampleapp.common;
+package com.amorepacific.common;
 
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

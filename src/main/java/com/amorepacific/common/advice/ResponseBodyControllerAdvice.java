@@ -1,7 +1,7 @@
-package com.amorepacific.sampleapp.common.advice;
+package com.amorepacific.common.advice;
 
-import com.amorepacific.sampleapp.common.dto.ErrorResponse;
-import com.amorepacific.sampleapp.common.dto.SuccessResponse;
+import com.amorepacific.common.dto.ErrorResponse;
+import com.amorepacific.common.dto.SuccessResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;

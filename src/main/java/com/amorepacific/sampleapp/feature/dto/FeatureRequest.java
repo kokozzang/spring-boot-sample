@@ -1,6 +1,6 @@
 package com.amorepacific.sampleapp.feature.dto;
 
-import com.amorepacific.sampleapp.common.util.dtotomodel.DtoToModelConverter;
+import com.amorepacific.common.util.dtotomodel.DtoToModelConverter;
 import com.amorepacific.sampleapp.feature.model.Feature;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
