@@ -19,4 +19,7 @@ public abstract class CommonException extends RuntimeException {
 	@NonNull
 	protected String message;
 
+	@Getter
+	private String data;
+
 }
