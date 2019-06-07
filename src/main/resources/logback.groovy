@@ -17,6 +17,7 @@ conversionRule("wEx", ExtendedWhitespaceThrowableProxyConverter)
 
 
 def DEFAULT_FOLDER = "./logs"
+def NAME_PREFIX = "sammple"
 
 appender('COMMON_CONSOLE_APPENDER', ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
@@ -27,10 +28,10 @@ appender('COMMON_CONSOLE_APPENDER', ConsoleAppender) {
 }
 
 appender('COMMON_CONSOLE_FILE_APPENDER', RollingFileAppender) {
-    file = DEFAULT_FOLDER + "/ap-member-console.log"
+    file = DEFAULT_FOLDER + "/ap-" + NAME_PREFIX + "-console.log"
     append = true
     rollingPolicy(TimeBasedRollingPolicy) {
-        fileNamePattern = DEFAULT_FOLDER + "/ap-member-console-%d{yyyy-MM-dd}.gz"
+        fileNamePattern = DEFAULT_FOLDER + "/ap-" + NAME_PREFIX + "-console-%d{yyyy-MM-dd}.gz"
         maxHistory = 5
     }
     encoder(PatternLayoutEncoder) {
@@ -41,10 +42,10 @@ appender('COMMON_CONSOLE_FILE_APPENDER', RollingFileAppender) {
 }
 
 appender('COMMON_FILE_APPENDER', RollingFileAppender){
-    file = DEFAULT_FOLDER + "/ap-member.log"
+    file = DEFAULT_FOLDER + "/ap-" + NAME_PREFIX + ".log"
     append = true
     rollingPolicy(TimeBasedRollingPolicy) {
-        fileNamePattern = DEFAULT_FOLDER + "/ap-member-%d{yyyy-MM-dd}.gz"
+        fileNamePattern = DEFAULT_FOLDER + "/ap-" + NAME_PREFIX + "-%d{yyyy-MM-dd}.gz"
         maxHistory = 30
     }
     encoder(PatternLayoutEncoder){
