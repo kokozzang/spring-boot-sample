@@ -8,6 +8,7 @@ import com.amorepacific.common.exception.wrapper.MethodNotAllowed;
 import com.amorepacific.common.exception.wrapper.NotFound;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -41,6 +42,7 @@ public class ExceptionHandleControllerAdvice {
       MissingServletRequestParameterException.class,
       MethodArgumentTypeMismatchException.class,
       HttpMessageNotReadableException.class,
+      BindException.class
   })
   public ResponseEntity<ErrorResponse> handleBadRequestException(Exception e) throws Exception {
     BadRequestException badRequestException = new BadRequestException(e);

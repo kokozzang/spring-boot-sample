@@ -7,6 +7,8 @@ import java.util.List;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -52,6 +54,9 @@ public class BadRequestException extends BadRequest {
     else if (exception instanceof HttpMessageNotReadableException) {
       this.handleBadRequest((HttpMessageNotReadableException) exception);
     }
+    else if (exception instanceof BindException) {
+      this.handleBadRequest((BindException) exception);
+    }
     else {
       throw exception;
     }
@@ -71,15 +76,28 @@ public class BadRequestException extends BadRequest {
   }
 
   /**
-   * bean vadlidation
+   * bean validation
+   * @param exception bean validation으로 발생한 exception 객체
+   * @param exception
+   */
+  private void handleBadRequest(BindException exception) {
+    this.exception = exception;
+    this.details = this.getErrorDetailsByBindingResult(exception.getBindingResult());
+  }
+
+  /**
+   * bean validation
    *  @param exception bean validation으로 발생한 exception 객체
    */
   private void handleBadRequest(MethodArgumentNotValidException exception) {
     this.exception = exception;
+    this.details = this.getErrorDetailsByBindingResult(exception.getBindingResult());
+  }
 
+  private List<ErrorDetail> getErrorDetailsByBindingResult(BindingResult bindingResult) {
     List<ErrorDetail> errorDetails = Lists.newArrayList();
 
-    exception.getBindingResult().getAllErrors().forEach(error -> {
+    bindingResult.getAllErrors().forEach(error -> {
       FieldError fieldError = (FieldError) error;
       ErrorDetail errorDetail = ErrorDetail.builder()
           .field(fieldError.getField())
@@ -89,7 +107,7 @@ public class BadRequestException extends BadRequest {
       errorDetails.add(errorDetail);
     });
 
-    this.details = errorDetails;
+    return errorDetails;
   }
 
   /**
