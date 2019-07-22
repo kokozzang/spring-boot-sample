@@ -1,0 +1,16 @@
+|===
+|Path|Type|Description
+
+|code
+|String
+|결과 코드
+
+|message
+|String
+|결과 메시지
+
+|data
+|Object
+|데이터
+
+|===

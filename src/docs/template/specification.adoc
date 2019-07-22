@@ -1,0 +1,26 @@
+include::{snippets}/<%= className %>/<%= methodName %>/api-description.adoc[]
+
+==== Request
+ifeval::["<%= isPathParametersExists %>" == "true" ]
+===== Path parameters
+include::{snippets}/<%= className %>/<%= methodName %>/path-parameters.adoc[]
+endif::[]
+
+ifeval::["<%= isRequestParametersExists %>" == "true" ]
+===== Request parameters
+include::{snippets}/<%= className %>/<%= methodName %>/request-parameters.adoc[]
+endif::[]
+
+ifeval::["<%= isRequestFieldsExists %>" == "true" ]
+===== Request Fields
+include::{snippets}/<%= className %>/<%= methodName %>/request-fields.adoc[]
+endif::[]
+
+==== Response
+include::{snippets}/<%= className %>/<%= methodName %>/response-fields-data.adoc[]
+
+===== Example Request
+include::{snippets}/<%= className %>/<%= methodName %>/http-request.adoc[]
+
+===== Example Response
+include::{snippets}/<%= className %>/<%= methodName %>/http-response.adoc[]

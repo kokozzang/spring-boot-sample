@@ -1,0 +1,42 @@
+= 검색 API
+Doc Writer <yjchoi@amorepacific.com>, <idolpark@amorepacific.com>
+v1.0, 2014-08-01
+:toc: left
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toclevels: 2
+:page-layout: docs
+
+
+= Overview
+
+[[introduction]]
+== 소개
+
+검색 API
+
+[[common]]
+== 공통 사항
+ㅇㅇㅇㅇㅇㅇㅇㅇ 공통이다.
+
+=== Domain
+
+|===
+| 환경 | Domain
+
+| DEV
+| `https://api.amorepacific-dev.com/search`
+
+| STAGE
+| `http://api.amorepacific-stage.com/search`
+
+| PRODUCTION
+| `https://api.amorepacific.com/search`
+|===
+
+=== 공통 response
+include::./common/response-fields.adoc[]
+
+== Feature
+include::./api/FeaturesApi/index.adoc[]

@@ -1,3 +1,5 @@
+import java.nio.file.Paths
+
 buildscript {
     ext {
         springBootVersion = '2.1.2.RELEASE'
@@ -13,10 +15,16 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.asciidoctor.convert" version "1.5.3"
+}
+
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'groovy'
+
+
 
 group = 'com.amorepacific'
 version = '1.0.0-SNAPSHOT'
@@ -40,14 +48,17 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-logging'
+
+    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.3.RELEASE'
+    testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc:2.0.3.RELEASE'
 
     compileOnly 'org.projectlombok:lombok'
 
     runtimeOnly 'org.postgresql:postgresql'
 
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     compile 'com.google.guava:guava:27.1-jre'
@@ -58,3 +69,57 @@ dependencies {
 }
 
 ext['groovy.version'] = groovyVersion
+
+ext {
+    snippetsDir = file("$buildDir/generated-snippets")
+}
+
+test {
+    outputs.dir snippetsDir
+}
+
+task makeadoc {
+    doLast {
+        if (snippetsDir.exists()) {
+            snippetsDir.eachDir {classDir ->
+                file(classDir.canonicalPath).eachDir { methodDir ->
+                    copy {
+                        from('src/docs/template/') {
+                            include('specification.adoc')
+                        }
+                        rename 'specification.adoc', methodDir.name + '.adoc'
+                        into(Paths.get(snippetsDir.canonicalPath, classDir.name))
+
+                        def fileList = file(methodDir).listFiles().collect{f -> return f.name}
+                        def isPathParametersExists = fileList.contains("path-parameters.adoc")
+                        def isRequestFieldsExists = fileList.contains("request-fields.adoc")
+                        def isRequestParametersExists = fileList.contains("request-parameters.adoc")
+                        def expandMap = [:]
+                        expandMap.put("className", classDir.name)
+                        expandMap.put("methodName", methodDir.name)
+                        expandMap.put("isPathParametersExists", isPathParametersExists.toString())
+                        expandMap.put("isRequestFieldsExists", isRequestFieldsExists.toString())
+                        expandMap.put("isRequestParametersExists", isRequestParametersExists.toString())
+                        expand(expandMap)
+                    }
+                }
+            }
+        }
+    }
+}
+
+asciidoctor {
+    dependsOn test
+    dependsOn makeadoc
+    tasks.findByName('makeadoc').mustRunAfter('test')
+
+    inputs.dir snippetsDir
+    attributes 'snippets': snippetsDir
+}
+
+bootJar {
+    dependsOn asciidoctor // (3)
+    from ("${asciidoctor.outputDir}/html5") { // (4)
+        into 'static/docs'
+    }
+}

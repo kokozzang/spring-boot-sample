@@ -1,0 +1,8 @@
+=== Feature 생성
+include::{snippets}/FeaturesApi/saveFeature.adoc[]
+
+=== Feature 조회
+include::{snippets}/FeaturesApi/getFeature.adoc[]
+
+=== Feature 리스트 조회
+include::{snippets}/FeaturesApi/getFeatures.adoc[]

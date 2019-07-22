@@ -3,11 +3,16 @@ package com.amorepacific.sampleapp.feature.controller;
 import com.amorepacific.common.dto.ErrorDetail;
 import com.amorepacific.common.exception.custom.BadRequestException;
 import com.amorepacific.sampleapp.feature.dto.FeatureRequest;
+import com.amorepacific.sampleapp.feature.dto.FeaturesRequestParams;
+import com.amorepacific.sampleapp.feature.dto.UpdateFeaturePathVariables;
 import com.amorepacific.sampleapp.feature.model.Feature;
+import com.amorepacific.sampleapp.feature.service.FeatureService;
 import com.google.common.collect.Lists;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,20 +29,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/features")
 public class FeatureController {
 
+  @Autowired
+  private FeatureService featureService;
+
+//  @GetMapping(value = "")
+//  public List<Feature> getFeatures(@RequestParam(value = "size") int size, @RequestParam(value = "page") int page) {
+//
+//    logger.debug("size: {}, page: {}", size, page);
+//
+//    return featureService.getFeatures(page, size);
+//  }
+
   @GetMapping(value = "")
-  public List<Feature> getFeatures(@RequestParam(value = "size") int size, @RequestParam(value = "page") int page) {
+  public List<Feature> getFeatures(@Validated FeaturesRequestParams featuresRequestParams) {
 
-    Feature feature = new Feature();
-    feature.setId(1);
-    feature.setName("feature 1");
-    feature.setDescription("description feature 1");
-    feature.setDate(LocalDateTime.now());
+    logger.debug("size: {}, page: {}", featuresRequestParams.getSize(), featuresRequestParams.getPage());
 
-    List<Feature> features = Lists.newArrayList();
-
-    logger.debug("size: {}, page: {}", size, page);
-
-    return features;
+    return featureService.getFeatures(featuresRequestParams.getPage(), featuresRequestParams.getSize());
   }
 
   @PostMapping(value = "")
@@ -47,11 +54,11 @@ public class FeatureController {
 
     Feature feature = featureRequest.convert();
 
-    return feature;
+    return featureService.saveFeature(feature);
   }
 
   @GetMapping(value = "/{id}")
-  public Feature getFeatures(@PathVariable(name = "id") int id) {
+  public Feature getFeatures(@PathVariable(name = "id") @Min(1) int id) {
 
     Feature feature = new Feature();
     feature.setId(1);
@@ -63,15 +70,24 @@ public class FeatureController {
   }
 
 
+//  @PutMapping(value = "/{id}")
+//  @ResponseStatus(HttpStatus.OK)
+//  public Feature updateFeature(@PathVariable(name = "id") int id, @Validated @RequestBody FeatureRequest featureRequest) {
+//
+//    Feature feature = featureRequest.convert();
+//    feature.setId(id);
+//
+//    return featureService.getFeature(id);
+//  }
+
   @PutMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public Feature updateFeature(@PathVariable(name = "id") int id, @Validated @RequestBody FeatureRequest featureRequest) {
+  public Feature updateFeature(UpdateFeaturePathVariables updateFeaturePathVariables, @Validated @RequestBody FeatureRequest featureRequest) {
 
-    featureRequest.setId(id);
     Feature feature = featureRequest.convert();
-//    feature.setId(id);
+    feature.setId(updateFeaturePathVariables.getId());
 
-    return feature;
+    return featureService.getFeature(updateFeaturePathVariables.getId());
   }
 
 //  @DeleteMapping(value = "/{id}")
