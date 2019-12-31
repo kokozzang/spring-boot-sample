@@ -26,7 +26,7 @@ apply plugin: 'groovy'
 
 
 
-group = 'com.amorepacific'
+group = 'com.kokozzang'
 version = '1.0.0-SNAPSHOT'
 sourceCompatibility = '11'
 
@@ -37,12 +37,7 @@ configurations {
 }
 
 repositories {
-    maven {
-        url "https://nexus.apdigit.tech/repository/maven-central/"
-    }
-    maven {
-        url "https://nexus.apdigit.tech/repository/maven-releases/"
-    }
+    mavenCentral()
 }
 
 dependencies {
