@@ -1,4 +1,4 @@
-//package com.amorepacific.sampleapp.common.dto;
+//package com.kokozzang.sampleapp.common.dto;
 //
 //import com.fasterxml.jackson.annotation.JsonInclude;
 //import com.fasterxml.jackson.annotation.JsonInclude.Include;

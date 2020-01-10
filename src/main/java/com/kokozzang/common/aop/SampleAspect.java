@@ -1,4 +1,4 @@
-//package com.amorepacific.sampleapp.common.aop;
+//package com.kokozzang.sampleapp.common.aop;
 //
 //import org.aspectj.lang.JoinPoint;
 //import org.aspectj.lang.ProceedingJoinPoint;
@@ -13,17 +13,17 @@
 //
 //	private static final Logger logger = LoggerFactory.getLogger(SampleAspect.class);
 //
-//	@Before("execution(* com.amorepacific.authorize.*.service.*.*Aop(..))")
+//	@Before("execution(* com.kokozzang.authorize.*.service.*.*Aop(..))")
 //	public void before(JoinPoint joinPoint) {
 //		logger.info(":: Before Aspect ::");
 //	}
 //
-//	@After("execution(* com.amorepacific.authorize.*.service.*.*Aop(..))")
+//	@After("execution(* com.kokozzang.authorize.*.service.*.*Aop(..))")
 //	public void after(JoinPoint joinPoint) {
 //		logger.info(":: After Aspect ::");
 //	}
 //
-//	@AfterReturning(pointcut = "execution(* com.amorepacific.authorize.*.service.*.*(..))", returning = "result")
+//	@AfterReturning(pointcut = "execution(* com.kokozzang.authorize.*.service.*.*(..))", returning = "result")
 //	public void afterReturning(JoinPoint joinPoint, Object result) {
 //		logger.info(":: AfterReturning Aspect : " + result);
 //	}

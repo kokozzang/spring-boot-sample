@@ -1,4 +1,4 @@
-//package com.amorepacific.sampleapp.common.aop;
+//package com.kokozzang.sampleapp.common.aop;
 //
 //import java.lang.annotation.ElementType;
 //import java.lang.annotation.Retention;
