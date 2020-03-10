@@ -1,26 +1,54 @@
 package com.kokozzang.common.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import java.util.List;
+import java.util.TimeZone;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
+  @Override
+  public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    converters.add(mappingJackson2HttpMessageConverter());
+  }
+
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping("/**");
+  }
+
+
   @Bean
-  public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
+  public MethodValidationPostProcessor methodValidationPostProcessor() {
+    return new MethodValidationPostProcessor();
+  }
+
+  @Override
+  public void configureContentNegotiation (ContentNegotiationConfigurer configurer) {
+    configurer.defaultContentType(MediaType.APPLICATION_JSON);
+  }
+
+  private MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
 
     ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
         .propertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-//        .timeZone(TimeZone.getTimeZone("UTC"))
+        .serializationInclusion(Include.NON_NULL)
+        .timeZone(TimeZone.getTimeZone("UTC"))
         .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         .build();
 
@@ -33,21 +61,6 @@ public class WebConfig implements WebMvcConfigurer {
     converter.setPrettyPrint(true);
 
     return converter;
-  }
-
-  @Bean
-  public WebMvcConfigurer corsConfigurer() {
-    return new WebMvcConfigurer() {
-      @Override
-      public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**");
-      }
-    };
-  }
-
-  @Override
-  public void configureContentNegotiation (ContentNegotiationConfigurer configurer) {
-    configurer.defaultContentType(MediaType.APPLICATION_JSON);
   }
 
 }

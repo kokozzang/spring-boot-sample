@@ -1,0 +1,86 @@
+<configuration>
+
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+  <springProfile name="local">
+    <property resource="logback/local.properties" />
+  </springProfile>
+
+  <property name="LOGS_PATH" value="${log.path}" />
+  <property name="LOGGER_LEVEL_ROOT" value="${logger.level.root}" />
+  <property name="LOGGER_LEVEL_KOKOZZANG" value="${logger.level.com.kokozzang}" />
+  <property name="LOGGER_LEVEL_SPRING_WEB" value="${logger.level.org.springframework.web}" />
+
+  <property name="CUSTOM_CONSOLE_LOG_PATTERN" value="%clr(%date{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint}
+  %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint}
+  %clr([%15.15thread]){faint} %clr(%-40.40logger{39}){cyan}
+  %mdc{requestId:--}
+  %clr(:){faint} %message%n${LOG_EXCEPTION_CONVERSION_WORD:-%exception}"
+  />
+
+  <property name="CUSTOM_FILE_LOG_PATTERN" value="%date{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} ${LOG_LEVEL_PATTERN:-%p} ${PID:-} --- [%thread] %logger{39} %mdc{requestId:--} : %message%n${LOG_EXCEPTION_CONVERSION_WORD:-%exception}" />
+
+  <logger name="com.kokozzang" level="${LOGGER_LEVEL_KOKOZZANG}" />
+  <logger name="org.springframework.web" level="${LOGGER_LEVEL_SPRING_WEB}" />
+  <logger name="org.elasticsearch.client" level="${LOGGER_LEVEL_ELASTICSEARCH_CLIENT}" />
+
+
+  <springProfile name="console-logging">
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+        <Pattern>${CUSTOM_CONSOLE_LOG_PATTERN}</Pattern>
+      </encoder>
+    </appender>
+
+    <root level="${LOGGER_LEVEL_ROOT}">
+      <appender-ref ref="Console" />
+    </root>
+  </springProfile>
+
+  <springProfile name="file-logging">
+    <appender name="CommonRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <level>ERROR</level>
+        <onMatch>DENY</onMatch>
+        <onMismatch>ACCEPT</onMismatch>
+      </filter>
+
+      <file>${LOGS_PATH}/spring-boot-logger.log</file>
+      <encoder>
+        <Pattern>${CUSTOM_FILE_LOG_PATTERN}</Pattern>
+      </encoder>
+
+      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>${LOGS_PATH}/archived/spring-boot-logger-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+        <maxFileSize>100MB</maxFileSize>
+        <maxHistory>30</maxHistory>
+      </rollingPolicy>
+    </appender>
+
+    <appender name="ErrorFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <level>ERROR</level>
+        <onMatch>ACCEPT</onMatch>
+        <onMismatch>DENY</onMismatch>
+      </filter>
+
+      <file>${LOGS_PATH}/error-logger.log</file>
+      <encoder>
+        <Pattern>${CUSTOM_FILE_LOG_PATTERN}</Pattern>
+      </encoder>
+
+      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>${LOGS_PATH}/archived/error-logger-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+        <maxFileSize>100MB</maxFileSize>
+        <maxHistory>30</maxHistory>
+      </rollingPolicy>
+    </appender>
+
+    <root level="${LOGGER_LEVEL_ROOT}">
+      <appender-ref ref="CommonRollingFileAppender" />
+      <appender-ref ref="ErrorFileAppender" />
+    </root>
+
+  </springProfile>
+
+</configuration>

@@ -6,6 +6,7 @@ import com.kokozzang.common.exception.custom.BadRequestException;
 import com.kokozzang.common.exception.wrapper.InternalServerError;
 import com.kokozzang.common.exception.wrapper.MethodNotAllowed;
 import com.kokozzang.common.exception.wrapper.NotFound;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 
 @RestControllerAdvice
+@Slf4j
 public class ExceptionHandleControllerAdvice {
 
   @ExceptionHandler(value = CommonException.class)
@@ -75,6 +77,7 @@ public class ExceptionHandleControllerAdvice {
 
   @ExceptionHandler(value = Exception.class)
   public ResponseEntity<ErrorResponse> handleException(Exception e) {
+    logger.error(e.getMessage(), e);
     CommonException commonException = new InternalServerError();
     return this.sendError(commonException, new ErrorResponse(commonException));
   }
