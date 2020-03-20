@@ -2,9 +2,13 @@ package com.kokozzang.sampleapp.feature.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
 public class Feature implements Serializable {
 
   private static final long serialVersionUID = 696164566368452699L;
@@ -17,4 +21,11 @@ public class Feature implements Serializable {
 
   private LocalDateTime date;
 
+  @Builder
+  public Feature(Integer id, String name, String description) {
+    this.id = id;
+    this.name = name;
+    this.description = description;
+    this.date = LocalDateTime.now();
+  }
 }

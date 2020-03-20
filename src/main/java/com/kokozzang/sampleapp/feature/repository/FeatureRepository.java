@@ -1,9 +1,10 @@
-package com.kokozzang.sampleapp.feature.service;
+package com.kokozzang.sampleapp.feature.repository;
+
 
 import com.kokozzang.sampleapp.feature.model.Feature;
 import java.util.List;
 
-public interface FeatureService {
+public interface FeatureRepository {
 
   Feature saveFeature(Feature feature);
 
@@ -13,5 +14,6 @@ public interface FeatureService {
 
   Feature updateFeature(int id, Feature feature);
 
-  void removeFeature(int id);
+  void removeFeature(Feature feature);
+
 }

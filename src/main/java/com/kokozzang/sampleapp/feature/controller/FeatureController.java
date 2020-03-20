@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,8 +30,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/features")
 public class FeatureController {
 
-  @Autowired
-  private FeatureService featureService;
+  private final FeatureService featureService;
+
+  public FeatureController(FeatureService featureService) {
+    this.featureService = featureService;
+  }
 
 //  @GetMapping(value = "")
 //  public List<Feature> getFeatures(@RequestParam(value = "size") int size, @RequestParam(value = "page") int page) {
@@ -39,14 +43,6 @@ public class FeatureController {
 //
 //    return featureService.getFeatures(page, size);
 //  }
-
-  @GetMapping(value = "")
-  public List<Feature> getFeatures(@Validated FeaturesRequestParams featuresRequestParams) {
-
-    logger.debug("size: {}, page: {}", featuresRequestParams.getSize(), featuresRequestParams.getPage());
-
-    return featureService.getFeatures(featuresRequestParams.getPage(), featuresRequestParams.getSize());
-  }
 
   @PostMapping(value = "")
   @ResponseStatus(HttpStatus.CREATED)
@@ -57,16 +53,18 @@ public class FeatureController {
     return featureService.saveFeature(feature);
   }
 
+
   @GetMapping(value = "/{id}")
-  public Feature getFeatures(@PathVariable(name = "id") @Min(1) int id) {
+  public Feature getFeature(@PathVariable(name = "id") @Min(1) int id) {
+    return featureService.getFeature(id);
+  }
 
-    Feature feature = new Feature();
-    feature.setId(1);
-    feature.setName("feature 1");
-    feature.setDescription("description feature 1");
-    feature.setDate(LocalDateTime.now());
+  @GetMapping(value = "")
+  public List<Feature> getFeatures(@Validated FeaturesRequestParams featuresRequestParams) {
 
-    return feature;
+    logger.debug("size: {}, page: {}", featuresRequestParams.getSize(), featuresRequestParams.getPage());
+
+    return featureService.getFeatures(featuresRequestParams.getPage(), featuresRequestParams.getSize());
   }
 
 
@@ -85,17 +83,14 @@ public class FeatureController {
   public Feature updateFeature(UpdateFeaturePathVariables updateFeaturePathVariables, @Validated @RequestBody FeatureRequest featureRequest) {
 
     Feature feature = featureRequest.convert();
-    feature.setId(updateFeaturePathVariables.getId());
 
-    return featureService.getFeature(updateFeaturePathVariables.getId());
+    return featureService.updateFeature(updateFeaturePathVariables.getId(), feature);
   }
 
-//  @DeleteMapping(value = "/{id}")
-//  @ResponseStatus(HttpStatus.NO_CONTENT)
-//  public void deleteFeature(@PathVariable(name = "id") int id) {
-//
-//    // delete action
-//  }
+  @DeleteMapping(value = "/{id}")
+  public void deleteFeature(@PathVariable(name = "id") int id) {
+    featureService.removeFeature(id);
+  }
 
 
   @GetMapping(value = "/custom_bad_request")

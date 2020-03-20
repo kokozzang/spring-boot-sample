@@ -15,6 +15,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.kokozzang.sampleapp.feature.controller.FeatureController;
 import com.kokozzang.sampleapp.feature.dto.FeatureRequest;
 import com.kokozzang.sampleapp.feature.dto.FeaturesRequestParams;
@@ -24,11 +26,9 @@ import com.kokozzang.sampleapp.restdoc.utils.ApiDocumentUtils.ConstrainedFields;
 import com.kokozzang.sampleapp.restdoc.utils.ApiDocumentUtils.ConstrainedParameters;
 import com.kokozzang.sampleapp.restdoc.utils.ApiDocumentUtils.RequestParameterHelper;
 import com.kokozzang.sampleapp.restdoc.utils.DocumentBase;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -41,7 +41,7 @@ public class FeaturesApi extends DocumentBase {
   @MockBean
   private FeatureService featureService;
 
-
+  @DisplayName("Feature 생성")
   @Test
   public void saveFeature() throws Exception {
 
@@ -50,13 +50,17 @@ public class FeaturesApi extends DocumentBase {
     featureRequest.setDescription("자세한 설명은 생략한다.");
 
     Feature feature = featureRequest.convert();
-    feature.setId(1);
-    feature.setDate(LocalDateTime.now());
+
+    Feature savedFeature = Feature.builder()
+        .id(1)
+        .name(feature.getName())
+        .description(feature.getDescription())
+        .build();
 
     ObjectMapper objectMapper = new ObjectMapper();
 
     given(featureService.saveFeature(any(Feature.class)))
-        .willReturn(feature);
+        .willReturn(savedFeature);
 
     ConstrainedFields fields = new ConstrainedFields(FeatureRequest.class);
 
@@ -89,22 +93,22 @@ public class FeaturesApi extends DocumentBase {
         ));
   }
 
+  @DisplayName("Feature 조회")
   @Test
   public void getFeature() throws Exception {
-    FeatureRequest featureRequest = new FeatureRequest();
-    featureRequest.setName("feature1");
-    featureRequest.setDescription("자세한 설명은 생략한다.");
 
-    Feature feature = featureRequest.convert();
-    feature.setId(1);
-    feature.setDate(LocalDateTime.now());
+    Feature feature = Feature.builder()
+        .id(1)
+        .name("feature1")
+        .description("자세한 설명은 생략한다.")
+        .build();
 
-    given(featureService.getFeature(1))
+    given(featureService.getFeature(feature.getId()))
         .willReturn(feature);
 
     // when
     ResultActions resultActions = mockMvc.perform(
-        get("/features/{id}", 1)
+        get("/features/{id}", feature.getId())
             .accept(MediaType.APPLICATION_JSON)
     );
 
@@ -128,22 +132,23 @@ public class FeaturesApi extends DocumentBase {
         ));
   }
 
+  @DisplayName("Feature list 조회")
   @Test
   public void getFeatures() throws Exception {
 
     List<Feature> features = Lists.newArrayList();
 
-    Feature feature1 = new Feature();
-    feature1.setId(1);
-    feature1.setName("feature 1");
-    feature1.setDescription("description feature 1");
-    feature1.setDate(LocalDateTime.now());
+    Feature feature1 = Feature.builder()
+        .id(1)
+        .name("feature" + 1)
+        .description("description feature " + 1)
+        .build();
 
-    Feature feature2 = new Feature();
-    feature2.setId(2);
-    feature2.setName("feature 2");
-    feature2.setDescription("description feature 2");
-    feature2.setDate(LocalDateTime.now());
+    Feature feature2 = Feature.builder()
+        .id(2)
+        .name("feature" + 2)
+        .description("description feature " + 2)
+        .build();
 
     features.add(feature1);
     features.add(feature2);
