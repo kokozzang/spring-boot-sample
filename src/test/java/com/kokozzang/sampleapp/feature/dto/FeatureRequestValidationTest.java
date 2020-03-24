@@ -11,13 +11,18 @@ import javax.validation.constraints.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class FeatureRequestValidationTest {
+
+  private final static Logger logger = LoggerFactory.getLogger(FeatureRequestValidationTest.class);
 
   private Validator validator;
 
   @BeforeEach
   void setUp() {
+    logger.info("beforeEach");
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     validator = factory.getValidator();
   }

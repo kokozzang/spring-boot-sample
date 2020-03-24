@@ -1,23 +1,23 @@
 package com.kokozzang.sampleapp.feature.dto;
 
-import com.kokozzang.common.util.dtotomodel.DtoToModelConverter;
 import com.kokozzang.sampleapp.feature.model.Feature;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
 public class FeatureRequest {
+  public final static int NAME_MIN_LENGTH = 3;
+  public final static int NAME_MAX_LENGTH = 10;
+
 
 //  @JsonProperty(access = Access.READ_ONLY)
   private Integer id;
 
   @NotNull
-  @Size(min = 3, max = 10)
+  @Size(min = NAME_MIN_LENGTH, max = NAME_MAX_LENGTH)
   private String name;
 
   @NotNull

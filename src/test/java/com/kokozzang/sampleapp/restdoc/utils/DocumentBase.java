@@ -6,40 +6,33 @@ import static com.kokozzang.sampleapp.restdoc.utils.ApiDocumentUtils.getDocument
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.restdocs.JUnitRestDocumentation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-@RunWith(SpringRunner.class)
+@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 public abstract class DocumentBase {
-
-  @Rule
-  public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
-
-  @Autowired
-  public WebApplicationContext context;
 
   protected MockMvc mockMvc;
 
   protected RestDocumentationResultHandler document;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  public void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
     this.document = document(
         "{ClassName}/{methodName}/",
         getDocumentRequest(),
         getDocumentResponse()
     );
 
-    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
-        .apply(documentationConfiguration(this.restDocumentation)
+    this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+        .apply(documentationConfiguration(restDocumentation)
             .uris()
 //            .withScheme("https")
 //            .withHost("sadfasfdocs.api.com")
@@ -47,13 +40,6 @@ public abstract class DocumentBase {
         )
         .alwaysDo(this.document)
         .build();
-  }
-
-
-  class GG {
-    private String urlTemplate;
-
-    private String httpMethod;
   }
 
 }

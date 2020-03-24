@@ -27,8 +27,9 @@ import com.kokozzang.sampleapp.restdoc.utils.ApiDocumentUtils.ConstrainedParamet
 import com.kokozzang.sampleapp.restdoc.utils.ApiDocumentUtils.RequestParameterHelper;
 import com.kokozzang.sampleapp.restdoc.utils.DocumentBase;
 import java.util.List;
-import org.junit.Test;
+
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
