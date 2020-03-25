@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;
 import com.kokozzang.common.dto.ErrorDetail;
+import com.kokozzang.common.dto.ErrorDetail.ErrorDetailBuilder;
 import com.kokozzang.common.exception.wrapper.BadRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -97,11 +99,17 @@ public class BadRequestException extends BadRequest {
       FieldError fieldError = (FieldError) error;
       String field = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, fieldError.getField());
 
-      ErrorDetail errorDetail = ErrorDetail.builder()
+      ErrorDetailBuilder errorDetailBuilder = ErrorDetail.builder()
           .field(field)
           .value(fieldError.getRejectedValue())
-          .message(fieldError.getDefaultMessage())
-          .build();
+          .message(fieldError.getDefaultMessage());
+
+      if (fieldError.contains(TypeMismatchException.class)) {
+        errorDetailBuilder.message("Data type is not appropriate.");
+      }
+
+      ErrorDetail errorDetail = errorDetailBuilder.build();
+
       errorDetails.add(errorDetail);
     });
 
