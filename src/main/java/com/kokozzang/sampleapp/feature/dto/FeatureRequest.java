@@ -9,15 +9,11 @@ import lombok.Setter;
 @Setter
 @Getter
 public class FeatureRequest {
-  public final static int NAME_MIN_LENGTH = 3;
-  public final static int NAME_MAX_LENGTH = 10;
-
-
 //  @JsonProperty(access = Access.READ_ONLY)
   private Integer id;
 
   @NotNull
-  @Size(min = NAME_MIN_LENGTH, max = NAME_MAX_LENGTH)
+  @Size(min = 3, max = 10)
   private String name;
 
   @NotNull

@@ -36,13 +36,6 @@ public class FeatureController {
     this.featureService = featureService;
   }
 
-//  @GetMapping(value = "")
-//  public List<Feature> getFeatures(@RequestParam(value = "size") int size, @RequestParam(value = "page") int page) {
-//
-//    logger.debug("size: {}, page: {}", size, page);
-//
-//    return featureService.getFeatures(page, size);
-//  }
 
   @PostMapping(value = "")
   @ResponseStatus(HttpStatus.CREATED)
@@ -55,7 +48,7 @@ public class FeatureController {
 
 
   @GetMapping(value = "/{id}")
-  public Feature getFeature(@PathVariable(name = "id") @Min(1) int id) {
+  public Feature getFeature(@PathVariable(name = "id") int id) {
     return featureService.getFeature(id);
   }
 

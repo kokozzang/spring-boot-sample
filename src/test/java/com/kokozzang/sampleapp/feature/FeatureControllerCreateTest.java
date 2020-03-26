@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kokozzang.sampleapp.feature.controller.FeatureController;
 import com.kokozzang.sampleapp.feature.dto.FeatureRequest;
@@ -31,13 +30,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
 @WebMvcTest(FeatureController.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class FeatureControllerTest {
+@DisplayName("features 생성 test")
+public class FeatureControllerCreateTest {
 
-  private final static Logger logger = LoggerFactory.getLogger(FeatureControllerTest.class);
+  private final static Logger logger = LoggerFactory.getLogger(FeatureControllerCreateTest.class);
   private static ObjectMapper objectMapper;
 
   @MockBean
@@ -59,7 +58,7 @@ public class FeatureControllerTest {
 
 
   @BeforeEach
-  void setFeatureRequest() throws JsonProcessingException {
+  void setFeatureRequest() {
     logger.info("@BeforeEach");
     featureRequest = new FeatureRequest();
     featureRequest.setName("feature 1");
@@ -134,7 +133,7 @@ public class FeatureControllerTest {
           .andExpect(status().isBadRequest())
           .andExpect(jsonPath("$.details[*].field", hasItem("name")));
 
-      Assertions.assertTrue(featureRequest.getName().length() < FeatureRequest.NAME_MIN_LENGTH);
+      Assertions.assertTrue(featureRequest.getName().length() < 3);
     }
 
     @Test
@@ -153,10 +152,32 @@ public class FeatureControllerTest {
           .andExpect(status().isBadRequest())
           .andExpect(jsonPath("$.details[*].field", hasItem("name")));
 
-      Assertions.assertTrue(featureRequest.getName().length() > FeatureRequest.NAME_MAX_LENGTH);
+      Assertions.assertTrue(featureRequest.getName().length() > 10);
     }
   }
 
+  @Nested
+  @DisplayName("400 밸리데이션: description")
+  class Description {
 
+    @Test
+    @DisplayName("null 일때")
+    void null_일때() throws Exception {
+
+      featureRequest.setDescription(null);
+
+      // when
+      ResultActions actions = mockMvc.perform(
+          mockRequestBuilder.content(objectMapper.writeValueAsString(featureRequest))
+      )
+          .andDo(print());
+
+      // then
+      actions
+          .andExpect(status().isBadRequest())
+          .andExpect(jsonPath("$.details[*].field", hasItem("description")));
+
+    }
+  }
 
 }

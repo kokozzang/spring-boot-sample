@@ -105,7 +105,7 @@ public class BadRequestException extends BadRequest {
           .message(fieldError.getDefaultMessage());
 
       if (fieldError.contains(TypeMismatchException.class)) {
-        errorDetailBuilder.message("Data type is not appropriate.");
+        errorDetailBuilder.message("Type mismatch.");
       }
 
       ErrorDetail errorDetail = errorDetailBuilder.build();
