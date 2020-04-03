@@ -1,5 +1,6 @@
 package com.kokozzang.sampleapp.feature;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -13,7 +14,6 @@ import com.kokozzang.sampleapp.feature.controller.FeatureController;
 import com.kokozzang.sampleapp.feature.dto.FeatureRequest;
 import com.kokozzang.sampleapp.feature.model.Feature;
 import com.kokozzang.sampleapp.feature.service.FeatureService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +66,8 @@ public class FeatureControllerCreateTest {
 
     mockRequestBuilder = post("/features")
         .contentType(MediaType.APPLICATION_JSON)
-        .accept(MediaType.APPLICATION_JSON);
+        .accept(MediaType.APPLICATION_JSON)
+        .characterEncoding("utf-8");
   }
 
   @Test
@@ -133,7 +134,7 @@ public class FeatureControllerCreateTest {
           .andExpect(status().isBadRequest())
           .andExpect(jsonPath("$.details[*].field", hasItem("name")));
 
-      Assertions.assertTrue(featureRequest.getName().length() < 3);
+      assertThat(featureRequest.getName().length()).isLessThan(3);
     }
 
     @Test
@@ -152,7 +153,8 @@ public class FeatureControllerCreateTest {
           .andExpect(status().isBadRequest())
           .andExpect(jsonPath("$.details[*].field", hasItem("name")));
 
-      Assertions.assertTrue(featureRequest.getName().length() > 10);
+      assertThat(featureRequest.getName().length()).isGreaterThan(10);
+
     }
   }
 

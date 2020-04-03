@@ -19,6 +19,10 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,6 +187,27 @@ public class FeatureControllerGetFeaturesTest {
       }
     }
 
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"", "문자열", "0"})
+    void QueryParam_page_ParameterizedTest(String page) throws Exception {
+      MockHttpServletRequestBuilder mockRequestBuilder = get("/features")
+          .queryParam("page", page)
+          .queryParam("size", String.valueOf(10))
+          .contentType(MediaType.APPLICATION_JSON)
+          .accept(MediaType.APPLICATION_JSON);
+
+      // when
+      ResultActions actions = mockMvc.perform(
+          mockRequestBuilder
+      )
+          .andDo(print());
+
+      // then
+      actions
+          .andExpect(status().isBadRequest())
+          .andExpect(jsonPath("$.details[*].field", hasItem("page")));
+    }
 
   }
 
