@@ -5,7 +5,7 @@ buildscript {
         springBootVersion = '2.2.2.RELEASE'
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
     }
 }
 
@@ -15,7 +15,10 @@ plugins {
     id "org.asciidoctor.convert" version "1.5.3"
     id "org.sonarqube" version "2.7.1"
     id 'jacoco'
+    id "nebula.lint" version "16.7.0"
+
 }
+
 
 apply plugin: 'java'
 apply plugin: 'io.spring.dependency-management'
@@ -23,6 +26,7 @@ apply plugin: 'io.spring.dependency-management'
 group = 'com.kokozzang'
 version = '1.0.0-SNAPSHOT'
 sourceCompatibility = '11'
+description = 'spring sample project'
 
 configurations {
     compileOnly {
@@ -33,6 +37,8 @@ configurations {
 repositories {
     mavenCentral()
 }
+
+gradleLint.rules = ['dependency-parentheses']
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -53,7 +59,9 @@ dependencies {
 
 ext {
     snippetsDir = file("$buildDir/generated-snippets")
+    shouldDocumentation = !(project.hasProperty('restDocs') && (project.property('restDocs') == 'no'))
 }
+
 
 test {
     outputs.dir snippetsDir
@@ -61,6 +69,10 @@ test {
 }
 
 task makeadoc {
+    group 'documentation'
+    dependsOn test
+    onlyIf {shouldDocumentation}
+
     doLast {
         if (snippetsDir.exists()) {
             snippetsDir.eachDir {classDir ->
@@ -91,13 +103,15 @@ task makeadoc {
 }
 
 asciidoctor {
-    dependsOn test
+    group 'documentation'
     dependsOn makeadoc
-    tasks.findByName('makeadoc').mustRunAfter('test')
+
+    onlyIf {shouldDocumentation}
 
     inputs.dir snippetsDir
     attributes 'snippets': snippetsDir
 }
+
 
 bootJar {
     dependsOn asciidoctor // (3)
