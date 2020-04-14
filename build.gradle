@@ -1,27 +1,18 @@
 import java.nio.file.Paths
 
-buildscript {
-    ext {
-        springBootVersion = '2.2.2.RELEASE'
-    }
-    dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-    }
-}
-
 plugins {
-    id 'org.springframework.boot' version '2.2.2.RELEASE'
     id 'java'
-    id "org.asciidoctor.convert" version "1.5.3"
-    id "org.sonarqube" version "2.7.1"
     id 'jacoco'
+    id "org.sonarqube" version "2.7.1"
     id "nebula.lint" version "16.7.0"
-
+    id "org.asciidoctor.convert" version "1.5.3"
+    id 'org.springframework.boot' version '2.2.2.RELEASE'
+    id "io.spring.dependency-management" version "1.0.9.RELEASE"
 }
 
-
-apply plugin: 'java'
-apply plugin: 'io.spring.dependency-management'
+repositories {
+    mavenCentral()
+}
 
 group = 'com.kokozzang'
 version = '1.0.0-SNAPSHOT'
@@ -34,42 +25,50 @@ configurations {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
-gradleLint.rules = ['dependency-parentheses']
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    compile'org.springframework.boot:spring-boot-starter-aop'
+    compileOnly'org.springframework.boot:spring-boot-starter-aop'
 
-    compile 'com.google.guava:guava:27.1-jre'
-    compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.2'
+    implementation 'com.google.guava:guava:27.1-jre'
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.2'
     compileOnly 'org.projectlombok:lombok'
 
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
+
+    testCompileOnly 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'  exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
     asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
-    testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
-ext {
-    snippetsDir = file("$buildDir/generated-snippets")
-    shouldDocumentation = !(project.hasProperty('restDocs') && (project.property('restDocs') == 'no'))
+
+gradleLint.rules = ['dependency-parentheses']
+
+File snippetsDir = file("$buildDir/generated-snippets")
+boolean shouldTest = !project.hasProperty('skipTest')
+boolean shouldDocumentation = true
+if (!shouldTest) {
+    shouldDocumentation = false
+} else {
+    shouldDocumentation = !project.hasProperty('noRestDocs')
 }
 
 
 test {
+    onlyIf { shouldTest }
+
     outputs.dir snippetsDir
     useJUnitPlatform {}
 }
 
 task makeadoc {
-    group 'documentation'
+    group = 'documentation'
+    description = 'specification.adoc 템플릿을 사용하여 API adoc에 snippet을 조합한다.'
     dependsOn test
     onlyIf {shouldDocumentation}
 
@@ -103,7 +102,8 @@ task makeadoc {
 }
 
 asciidoctor {
-    group 'documentation'
+    group ='documentation'
+    description = 'adoc파일을 html로 변환.'
     dependsOn makeadoc
 
     onlyIf {shouldDocumentation}
@@ -114,8 +114,8 @@ asciidoctor {
 
 
 bootJar {
-    dependsOn asciidoctor // (3)
-    from ("${asciidoctor.outputDir}/html5") { // (4)
+    dependsOn asciidoctor
+    from ("${asciidoctor.outputDir}/html5") {
         into 'static/docs'
     }
 }
