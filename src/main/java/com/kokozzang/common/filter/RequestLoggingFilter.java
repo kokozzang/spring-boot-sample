@@ -1,12 +1,31 @@
 package com.kokozzang.common.filter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.AbstractRequestLoggingFilter;
@@ -89,47 +108,113 @@ public class RequestLoggingFilter extends AbstractRequestLoggingFilter {
    * <p>The final message is composed of the inner part as described and
    * the supplied prefix and suffix.
    */
+  @Override
   protected String createMessage(HttpServletRequest request, String prefix, String suffix) {
-    StringBuilder msg = new StringBuilder();
-    msg.append(prefix);
-    msg.append("uri=").append(request.getRequestURI());
+    RequestMessage requestMessage = new RequestMessage(request);
 
-    if (isIncludeQueryString()) {
-      String queryString = request.getQueryString();
-      if (queryString != null) {
-        msg.append('?').append(queryString);
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.LOWER_CAMEL_CASE);
+
+    StringBuilder message = new StringBuilder();
+    message.append(prefix);
+    try {
+      message.append(objectMapper.writeValueAsString(requestMessage));
+    } catch (JsonProcessingException e) {
+      logger.error(e.getMessage(), e);
+    }
+    message.append(suffix);
+
+    return message.toString();
+  }
+
+  @JsonPropertyOrder({"uri", "payload"})
+  @JsonInclude(Include.NON_NULL)
+  @Getter
+  class RequestMessage {
+
+    @JsonIgnore
+    private final HttpServletRequest request;
+
+    private String uri;
+
+    private String client;
+
+    private String session;
+
+    private String user;
+
+    private HttpHeaders headers;
+
+    @JsonRawValue
+    private String payload;
+
+
+    public RequestMessage(HttpServletRequest request) {
+      this.request = request;
+      this.setUri();
+      this.setClient();
+      this.setSession();
+      this.setUser();
+      this.setHeaders();
+      this.setPayload();
+    }
+
+    private void setUri() {
+      StringBuilder uri = new StringBuilder();
+      uri.append(request.getRequestURI());
+
+      if (isIncludeQueryString()) {
+        String queryString = request.getQueryString();
+        if (queryString != null) {
+          uri.append('?').append(queryString);
+        }
+      }
+      this.uri = uri.toString();
+    }
+
+    private void setClient() {
+      if (isIncludeClientInfo()) {
+        String client = request.getRemoteAddr();
+        if (StringUtils.hasLength(client)) {
+          this.client = client;
+        }
       }
     }
 
-    if (isIncludeClientInfo()) {
-      String client = request.getRemoteAddr();
-      if (StringUtils.hasLength(client)) {
-        msg.append(";client=").append(client);
-      }
-      HttpSession session = request.getSession(false);
-      if (session != null) {
-        msg.append(";session=").append(session.getId());
-      }
-      String user = request.getRemoteUser();
-      if (user != null) {
-        msg.append(";user=").append(user);
+    private void setSession() {
+      if (isIncludeClientInfo()) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+          this.session = session.getId();
+        }
       }
     }
 
-    if (isIncludeHeaders()) {
-      msg.append(";headers=").append(new ServletServerHttpRequest(request).getHeaders());
-    }
-
-    if (isIncludePayload()) {
-      String payload = getMessagePayload(request);
-      if (payload != null) {
-        payload = payload.replaceAll("[\n\t]", "");
-        msg.append(";payload=").append(payload);
+    private void setUser() {
+      if (isIncludeClientInfo()) {
+        String user = request.getRemoteUser();
+        if (user != null) {
+          this.user = user;
+        }
       }
     }
 
-    msg.append(suffix);
-    return msg.toString();
+    private void setHeaders() {
+      if (isIncludeHeaders()) {
+        this.headers = new ServletServerHttpRequest(request).getHeaders();
+      }
+    }
+
+    private void setPayload() {
+      if (isIncludePayload()) {
+        String payload = getMessagePayload(request);
+        if (payload != null) {
+          payload = payload.replaceAll("[\n\t]", "");
+          this.payload = payload;
+        }
+      }
+    }
   }
 
 }

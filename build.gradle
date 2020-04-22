@@ -31,17 +31,21 @@ dependencies {
 
     implementation 'com.google.guava:guava:27.1-jre'
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.2'
-    compileOnly 'org.projectlombok:lombok'
 
-    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly group: 'ch.qos.logback.contrib', name: 'logback-json-classic', version: '0.1.5'
+    compileOnly group: 'ch.qos.logback.contrib', name: 'logback-jackson', version: '0.1.5'
+
+
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
-
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'  exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-    testAnnotationProcessor 'org.projectlombok:lombok'
 
     asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
@@ -57,7 +61,6 @@ if (!shouldTest) {
 } else {
     shouldDocumentation = !project.hasProperty('noRestDocs')
 }
-
 
 test {
     onlyIf { shouldTest }
