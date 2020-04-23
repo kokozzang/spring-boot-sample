@@ -19,11 +19,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
   @Override
-  public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+  public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+    converters.removeIf(converter -> converter instanceof MappingJackson2HttpMessageConverter);
     converters.add(mappingJackson2HttpMessageConverter());
   }
 
