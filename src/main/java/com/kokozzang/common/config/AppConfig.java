@@ -34,7 +34,6 @@ public class AppConfig {
     requestLoggingFilter.setIncludeHeaders(true);
     requestLoggingFilter.setIncludeQueryString(true);
     requestLoggingFilter.setIncludePayload(true);
-    requestLoggingFilter.setMaxPayloadLength(100);
     requestLoggingFilter.setIncludeClientInfo(true);
 
     filterRegistrationBean.setFilter(requestLoggingFilter);

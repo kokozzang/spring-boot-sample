@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +28,11 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.AbstractRequestLoggingFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.WebUtils;
 
 @Slf4j
 public class RequestLoggingFilter extends AbstractRequestLoggingFilter {
@@ -51,7 +54,7 @@ public class RequestLoggingFilter extends AbstractRequestLoggingFilter {
     HttpServletRequest requestToUse = request;
 
     if (isIncludePayload() && isFirstRequest && !(request instanceof ContentCachingRequestWrapper)) {
-      requestToUse = new ContentCachingRequestWrapper(request, getMaxPayloadLength());
+      requestToUse = new ContentCachingRequestWrapper(request);
     }
 
     boolean shouldLog = shouldLog(requestToUse);
@@ -83,6 +86,26 @@ public class RequestLoggingFilter extends AbstractRequestLoggingFilter {
     return super.isIncludePayload();
   }
 
+  @Nullable
+  protected String getMessagePayload(HttpServletRequest request) {
+    ContentCachingRequestWrapper wrapper =
+        WebUtils.getNativeRequest(request, ContentCachingRequestWrapper.class);
+    if (wrapper != null) {
+      byte[] buf = wrapper.getContentAsByteArray();
+      if (buf.length > 0) {
+
+        try {
+          return new String(buf, wrapper.getCharacterEncoding());
+        }
+
+        catch (UnsupportedEncodingException ex) {
+          return "[unknown]";
+        }
+      }
+    }
+    return null;
+  }
+
 
   /**
    * Get the message to write to the log before the request.
@@ -98,6 +121,11 @@ public class RequestLoggingFilter extends AbstractRequestLoggingFilter {
    */
   private String getAfterMessage(HttpServletRequest request) {
     return createMessage(request, this.afterMessagePrefix, this.afterMessageSuffix);
+  }
+
+  @Override
+  public void setMaxPayloadLength(int maxPayloadLength) {
+    throw new UnsupportedOperationException("Do not call this method. payload 길이를 계산할 필요 없어서 사용하지 않음.");
   }
 
   /**
@@ -128,13 +156,15 @@ public class RequestLoggingFilter extends AbstractRequestLoggingFilter {
     return message.toString();
   }
 
-  @JsonPropertyOrder({"uri", "payload"})
+  @JsonPropertyOrder({"method", "uri", "payload"})
   @JsonInclude(Include.NON_NULL)
   @Getter
   class RequestMessage {
 
     @JsonIgnore
     private final HttpServletRequest request;
+
+    private String method;
 
     private String uri;
 
@@ -152,12 +182,17 @@ public class RequestLoggingFilter extends AbstractRequestLoggingFilter {
 
     public RequestMessage(HttpServletRequest request) {
       this.request = request;
+      this.setMethod();
       this.setUri();
       this.setClient();
       this.setSession();
       this.setUser();
       this.setHeaders();
       this.setPayload();
+    }
+
+    private void setMethod() {
+      this.method = request.getMethod();
     }
 
     private void setUri() {
