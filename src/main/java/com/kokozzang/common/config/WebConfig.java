@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.kokozzang.common.interceptor.SampleInterceptor;
 import java.util.List;
 import java.util.TimeZone;
 import org.springframework.context.annotation.Bean;
@@ -16,15 +17,21 @@ import org.springframework.validation.beanvalidation.MethodValidationPostProcess
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
   @Override
-  public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+  public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+    converters.removeIf(converter -> converter instanceof MappingJackson2HttpMessageConverter);
     converters.add(mappingJackson2HttpMessageConverter());
+  }
+
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(new SampleInterceptor());
   }
 
   @Override
@@ -42,6 +49,8 @@ public class WebConfig implements WebMvcConfigurer {
   public void configureContentNegotiation (ContentNegotiationConfigurer configurer) {
     configurer.defaultContentType(MediaType.APPLICATION_JSON);
   }
+
+
 
   private MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
 
