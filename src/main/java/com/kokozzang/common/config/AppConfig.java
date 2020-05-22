@@ -20,7 +20,7 @@ public class AppConfig {
     CorrelationFilter requestLoggingFilter = new CorrelationFilter();
 
     filterRegistrationBean.setFilter(requestLoggingFilter);
-    filterRegistrationBean.addUrlPatterns("/product/*");
+    filterRegistrationBean.addUrlPatterns("/features/*");
     filterRegistrationBean.setOrder(1);
 
     return filterRegistrationBean;
@@ -39,7 +39,7 @@ public class AppConfig {
 
     filterRegistrationBean.setFilter(requestLoggingFilter);
 
-    filterRegistrationBean.addUrlPatterns("/product/*");
+    filterRegistrationBean.addUrlPatterns("/features/*");
 
     return filterRegistrationBean;
   }
@@ -51,7 +51,7 @@ public class AppConfig {
     ResponseLoggingFilter responseLoggingFilter = new ResponseLoggingFilter();
     filterRegistrationBean.setFilter(responseLoggingFilter);
     filterRegistrationBean.setOrder(9999);
-    filterRegistrationBean.addUrlPatterns("/product/*");
+    filterRegistrationBean.addUrlPatterns("/features/*");
 
     return filterRegistrationBean;
   }

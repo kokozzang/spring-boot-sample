@@ -37,6 +37,80 @@
     </root>
   </springProfile>
 
+  <springProfile name="json-console-logging">
+    <appender name="JsonConsole" class="ch.qos.logback.core.ConsoleAppender">
+      <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+        <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+          <prettyPrint>false</prettyPrint>
+        </jsonFormatter>
+        <appendLineSeparator>true</appendLineSeparator>
+        <timestampFormat>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampFormat>
+      </layout>
+    </appender>
+
+    <root level="${LOGGER_LEVEL_ROOT}">
+      <appender-ref ref="JsonConsole" />
+    </root>
+  </springProfile>
+
+  <springProfile name="json-file-logging">
+    <appender name="CommonRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+        <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+          <prettyPrint>false</prettyPrint>
+        </jsonFormatter>
+        <appendLineSeparator>true</appendLineSeparator>
+        <timestampFormat>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampFormat>
+        <timestampFormatTimezoneId>UTC</timestampFormatTimezoneId>
+      </layout>
+
+      <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <level>ERROR</level>
+        <onMatch>DENY</onMatch>
+        <onMismatch>ACCEPT</onMismatch>
+      </filter>
+
+      <file>${LOGS_PATH}/spring-boot-logger.log</file>
+
+      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>${LOGS_PATH}/archived/spring-boot-logger-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+        <maxFileSize>100MB</maxFileSize>
+        <maxHistory>30</maxHistory>
+      </rollingPolicy>
+    </appender>
+
+    <appender name="ErrorFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+        <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+          <prettyPrint>false</prettyPrint>
+        </jsonFormatter>
+        <appendLineSeparator>true</appendLineSeparator>
+        <timestampFormat>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampFormat>
+        <timestampFormatTimezoneId>UTC</timestampFormatTimezoneId>
+      </layout>
+
+      <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <level>ERROR</level>
+        <onMatch>ACCEPT</onMatch>
+        <onMismatch>DENY</onMismatch>
+      </filter>
+
+      <file>${LOGS_PATH}/error-logger.log</file>
+
+      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>${LOGS_PATH}/archived/error-logger-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+        <maxFileSize>100MB</maxFileSize>
+        <maxHistory>30</maxHistory>
+      </rollingPolicy>
+    </appender>
+
+    <root level="${LOGGER_LEVEL_ROOT}">
+      <appender-ref ref="CommonRollingFileAppender" />
+      <appender-ref ref="ErrorFileAppender" />
+    </root>
+
+  </springProfile>
+
   <springProfile name="file-logging">
     <appender name="CommonRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
       <filter class="ch.qos.logback.classic.filter.LevelFilter">
