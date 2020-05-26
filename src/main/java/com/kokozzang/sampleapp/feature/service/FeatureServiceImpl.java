@@ -1,5 +1,6 @@
 package com.kokozzang.sampleapp.feature.service;
 
+import com.kokozzang.common.aop.Sample;
 import com.kokozzang.sampleapp.feature.model.Feature;
 import com.google.common.collect.Lists;
 import com.kokozzang.sampleapp.feature.repository.FeatureRepository;
@@ -24,6 +25,7 @@ public class FeatureServiceImpl implements FeatureService {
   }
 
   @Override
+  @Sample
   public Feature getFeature(int id) {
     return featureRepository.getFeature(id);
   }

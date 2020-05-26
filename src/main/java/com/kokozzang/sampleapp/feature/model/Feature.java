@@ -15,6 +15,16 @@ public class Feature implements Serializable {
 
   private Integer id;
 
+  @Override
+  public String toString() {
+    return "Feature{" +
+        "id=" + id +
+        ", name='" + name + '\'' +
+        ", description='" + description + '\'' +
+        ", date=" + date +
+        '}';
+  }
+
   private String name;
 
   private String description;
