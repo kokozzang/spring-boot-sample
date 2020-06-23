@@ -21,20 +21,25 @@ public class SampleAspect {
 		logger.info(":: Before Aspect ::");
 	}
 
-	@After("execution(* com.kokozzang.*.*.service.*.*(..))")
-	public void after(JoinPoint joinPoint) {
+//	@After("execution(* com.kokozzang.*.*.service.*.*(..))")
+	@After("@annotation(sample)")
+	public void after(JoinPoint joinPoint, Sample sample) {
 		logger.info(":: After Aspect ::");
 	}
 
-	@AfterReturning(pointcut = "execution(* com.kokozzang.*.*.service.*.*(..))", returning = "result")
-	public void afterReturning(JoinPoint joinPoint, Object result) {
+//	@AfterReturning(pointcut = "execution(* com.kokozzang.*.*.service.*.*(..))", returning = "result")
+	@AfterReturning(pointcut = "@annotation(sample)", returning = "result")
+	public void afterReturning(JoinPoint joinPoint, Object result, Sample sample) {
 		logger.info(":: AfterReturning Aspect : " + result);
 	}
 
 	@Around("@annotation(sample)")
 	public Object around(ProceedingJoinPoint pjp, Sample sample) throws Throwable {
-		logger.info(":: around ::");
-		return pjp.proceed();
+		logger.info(":: around before::");
+		Object o = pjp.proceed();
+		logger.info(":: around after::");
+
+		return o;
 	}
 
 }

@@ -2,5 +2,12 @@ spring:
   profiles:
     include: console-logging, json-file-logging
 
+  jpa:
+    hibernate:
+      ddl-auto: none
 
+  datasource:
+    url: "jdbc:mysql://127.0.0.1:3306/koko_world"
+    username: "root"
+    password: "123123"
 
